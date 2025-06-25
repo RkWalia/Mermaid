@@ -19,44 +19,35 @@ const Navbar = ({ diagramRef }) => {
     document.body.removeChild(downloadLink);
   };
 
-  const downloadImage = (type = 'png') => {
-    const svgElement = diagramRef.current?.querySelector('svg');
-    if (!svgElement) return;
 
-    const svgData = new XMLSerializer().serializeToString(svgElement);
-    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-    const url = URL.createObjectURL(svgBlob);
 
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
+  const downloadImage = async (type = 'png') => {
+  const svgElement = diagramRef.current?.querySelector('svg');
+  if (!svgElement) return;
 
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+  const svgData = new XMLSerializer().serializeToString(svgElement); // ✅ Extract SVG from DOM
+  const canvas = document.createElement('canvas');
+  canvas.width = svgElement.clientWidth;
+  canvas.height = svgElement.clientHeight;
 
-      const mimeType = type === 'jpg' ? 'image/jpeg' : 'image/png';
+  const ctx = canvas.getContext('2d');
 
-      canvas.toBlob((blob) => {
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = `diagram.${type}`;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(downloadLink.href);
-      }, mimeType);
-    };
+  // ✅ SAFELY render SVG into canvas using Canvg
+  const v = await Canvg.fromString(ctx, svgData);
+  await v.render();
 
-    img.onerror = (err) => {
-      console.error('Image load error:', err);
-    };
+  const mimeType = type === 'jpg' ? 'image/jpeg' : 'image/png';
 
-    img.src = url;
-  };
+  canvas.toBlob((blob) => {
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.download = `diagram.${type}`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(downloadLink.href);
+  }, mimeType);
+};
 
   const handleDownload = (type) => {
     setShowDownloadOptions(false);
