@@ -1,0 +1,286 @@
+///Loader
+
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+
+const LoaderPage = ({ isLoading }) => {
+  if (!isLoading) return null;
+
+  return (
+    <LoaderContainer>
+      <LoaderText>MyWebsite</LoaderText>
+    </LoaderContainer>
+  );
+};
+
+export default LoaderPage;
+
+// Styled components and CSS animations
+const pulse = keyframes`
+  0% { opacity: 0.2; }
+  50% { opacity: 1; }
+  100% { opacity: 0.2; }
+`;
+
+const LoaderContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #111;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+`;
+
+const LoaderText = styled.h1`
+  font-size: 3rem;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  animation: ${pulse} 2s infinite;
+`;
+
+
+
+//full screen
+const handleFullScreen = () => {
+  const elem = diagramContainerRef.current;
+  if (!elem) return;
+
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    elem.requestFullscreen().catch((err) => {
+      alert(`Error trying to enable fullscreen: ${err.message}`);
+    });
+  }
+};
+<button
+  onClick={handleFullScreen}
+  className="icon-btn"
+  title="Full Screen"
+>
+  ⛶ {/* or use Maximize from lucide-react */}
+</button>
+
+Or if you're using Lucide icons:
+
+js
+Copy
+Edit
+import { Maximize, Minimize } from 'lucide-react';
+Then update the button like this (optional toggle icon):
+
+jsx
+Copy
+Edit
+<button
+  onClick={handleFullScreen}
+  className="icon-btn"
+  title="Full Screen"
+>
+  {document.fullscreenElement ? <Minimize size={18} /> : <Maximize size={18} />}
+</button>
+
+
+//Add PNG/JPG Download Functionality
+const downloadImage = (format = 'png') => {
+  const svgElement = diagramRef.current.querySelector('svg');
+  if (!svgElement) return;
+
+  // Serialize SVG
+  const svgData = new XMLSerializer().serializeToString(svgElement);
+  const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+  const url = URL.createObjectURL(svgBlob);
+
+  const image = new Image();
+  image.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = image.width;
+    canvas.height = image.height;
+
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff'; // optional: background fill for JPG
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0);
+
+    // Convert to PNG or JPG
+    const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+    const dataUrl = canvas.toDataURL(mimeType);
+
+    // Create download link
+    const link = document.createElement('a');
+    link.href = dataUrl;
+    link.download = `diagram.${format}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    // Clean up
+    URL.revokeObjectURL(url);
+  };
+  image.src = url;
+};
+
+You can place these next to your "Download SVG" button:
+
+jsx
+Copy
+Edit
+<button
+  onClick={() => downloadImage('png')}
+  className="icon-btn"
+  title="Download PNG"
+>
+  PNG
+</button>
+
+<button
+  onClick={() => downloadImage('jpg')}
+  className="icon-btn"
+  title="Download JPG"
+>
+  JPG
+</button>
+
+
+//Here's How to Add Diagram Zoom:
+//1. Track the zoom level in state:
+
+const [zoom, setZoom] = useState(1);
+//2. Add a Zoom Slider or Buttons to UI:
+//Option A: Using a slider
+
+<div style={{ marginBottom: '1rem' }}>
+  <label style={{ marginRight: '0.5rem' }}>Zoom:</label>
+  <input
+    type="range"
+    min="0.5"
+    max="2"
+    step="0.1"
+    value={zoom}
+    onChange={(e) => setZoom(parseFloat(e.target.value))}
+  />
+  <span style={{ marginLeft: '0.5rem' }}>{(zoom * 100).toFixed(0)}%</span>
+</div>
+//Option B: Zoom In / Out Buttons
+
+<div>
+  <button onClick={() => setZoom(z => Math.max(0.5, z - 0.1))}>-</button>
+  <span style={{ margin: '0 0.5rem' }}>{(zoom * 100).toFixed(0)}%</span>
+  <button onClick={() => setZoom(z => Math.min(2, z + 0.1))}>+</button>
+</div>
+//3. Apply Zoom to the Diagram
+//Update the container div that holds the SVG to apply CSS scaling using the zoom state:
+
+<div
+  ref={diagramRef}
+  className="diagram-box"
+  style={{
+    transform: `scale(${zoom})`,
+    transformOrigin: 'top left',
+    width: 'fit-content'
+  }}
+>
+  {isRendering ? 'Rendering diagram...' : 'Click "Render" to generate diagram'}
+</div>
+
+
+//roughness nd pan option
+const [renderOptions, setRenderOptions] = useState({
+  rough: false,
+  pan: false
+});//in store
+
+//ToggleSwitch.js
+// ToggleSwitch.js
+import React from 'react';
+
+const ToggleSwitch = ({ label, isChecked, onChange }) => {
+  return (
+    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+      <span>{label}</span>
+      <div style={{ position: 'relative', width: '40px', height: '20px' }}>
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={onChange}
+          style={{
+            opacity: 0,
+            width: 0,
+            height: 0
+          }}
+        />
+        <span
+          style={{
+            position: 'absolute',
+            cursor: 'pointer',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: isChecked ? '#2563eb' : '#ccc',
+            borderRadius: '34px',
+            transition: '.4s'
+          }}
+        ></span>
+        <span
+          style={{
+            position: 'absolute',
+            left: isChecked ? '20px' : '2px',
+            top: '2px',
+            width: '16px',
+            height: '16px',
+            backgroundColor: 'white',
+            borderRadius: '50%',
+            transition: '.4s',
+            zIndex: 1
+          }}
+        ></span>
+      </div>
+    </label>
+  );
+};
+
+export default ToggleSwitch;
+//use in navbar
+import ToggleSwitch from './ToggleSwitch';
+
+<ToggleSwitch
+  label="Rough Style"
+  isChecked={renderOptions.rough}
+  onChange={() =>
+    setRenderOptions(prev => ({ ...prev, rough: !prev.rough }))
+  }
+/>
+
+<ToggleSwitch
+  label="Pan Enabled"
+  isChecked={renderOptions.pan}
+  onChange={() =>
+    setRenderOptions(prev => ({ ...prev, pan: !prev.pan }))
+  }
+/>
+
+    //pass to mermaid
+mermaid.initialize({
+  theme,
+  securityLevel: 'loose',
+  flowchart: {
+    rough: renderOptions.rough,
+    pan: renderOptions.pan,
+    useMaxWidth: true
+  },
+  class: {
+    rough: renderOptions.rough
+  },
+  sequence: {
+    rough: renderOptions.rough
+  }
+});
+
+    
+
+
