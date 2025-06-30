@@ -1,46 +1,57 @@
 ///Loader
 
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
 
 const LoaderPage = ({ isLoading }) => {
   if (!isLoading) return null;
 
   return (
-    <LoaderContainer>
-      <LoaderText>MyWebsite</LoaderText>
-    </LoaderContainer>
+    <div className="custom-loader">
+      <h1>We are rendering your diagram</h1>
+      <h2>Renderer</h2>
+      <p>By RkWalia...</p>
+
+      <style>{`
+        .custom-loader {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-color: #f4f1ec; /* off-white background */
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          border: 3px solid #2e0a64; /* optional purple border */
+          box-sizing: border-box;
+          z-index: 9999;
+        }
+
+        .custom-loader h1 {
+          font-size: 2rem;
+          margin-bottom: 1rem;
+          font-weight: bold;
+        }
+
+        .custom-loader h2 {
+          font-size: 1.7rem;
+          margin: 0;
+        }
+
+        .custom-loader p {
+          font-size: 1.1rem;
+          margin-top: 0.5rem;
+        }
+      `}</style>
+    </div>
   );
 };
 
 export default LoaderPage;
 
-// Styled components and CSS animations
-const pulse = keyframes`
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
-`;
-
-const LoaderContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #111;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-`;
-
-const LoaderText = styled.h1`
-  font-size: 3rem;
-  color: #fff;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  animation: ${pulse} 2s infinite;
-`;
 
 
 
