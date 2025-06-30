@@ -7,9 +7,9 @@ const LoaderPage = ({ isLoading }) => {
 
   return (
     <div className="custom-loader">
-      <h1>We are rendering your diagram</h1>
-      <h2>Renderer</h2>
-      <p>By RkWalia...</p>
+      <h1 className="pulse">We are rendering your diagram</h1>
+      <h2 className="fade-in">Renderer</h2>
+      <p className="fade-in-delay">By RkWalia...</p>
 
       <style>{`
         .custom-loader {
@@ -18,32 +18,62 @@ const LoaderPage = ({ isLoading }) => {
           left: 0;
           width: 100vw;
           height: 100vh;
-          background-color: #f4f1ec; /* off-white background */
+          background-color: #f4f1ec;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           text-align: center;
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          border: 3px solid #2e0a64; /* optional purple border */
+          border: 3px solid #2e0a64;
           box-sizing: border-box;
           z-index: 9999;
         }
 
+        .custom-loader h1,
+        .custom-loader h2,
+        .custom-loader p {
+          margin: 0.5rem 0;
+        }
+
         .custom-loader h1 {
           font-size: 2rem;
-          margin-bottom: 1rem;
           font-weight: bold;
+          animation: pulse 2s infinite;
         }
 
         .custom-loader h2 {
           font-size: 1.7rem;
-          margin: 0;
+          animation: fadeIn 1.5s ease-in forwards;
         }
 
         .custom-loader p {
           font-size: 1.1rem;
-          margin-top: 0.5rem;
+          animation: fadeIn 2.5s ease-in forwards;
+          opacity: 0;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+          0% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.02); }
+          100% { opacity: 0.4; transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+          opacity: 0;
+          animation: fadeIn 2s ease forwards;
+        }
+
+        .fade-in-delay {
+          opacity: 0;
+          animation-delay: 1.2s;
+          animation-fill-mode: forwards;
         }
       `}</style>
     </div>
