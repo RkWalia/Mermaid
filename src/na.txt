@@ -1,3 +1,126 @@
+import React, { useState } from 'react';
+
+export default function SidebarMenu() {
+  const [open, setOpen] = useState(false);
+
+  const handleClick = (item) => {
+    alert(`You clicked: ${item}`);
+    // You can also do:
+    // navigate(`/chat/${item}`); or loadChat(item);
+    setOpen(false); // close after click (optional)
+  };
+
+  return (
+    <>
+      {/* Navbar */}
+      <div style={styles.navbar}>
+        <button onClick={() => setOpen(true)} style={styles.menuBtn}>
+          ☰ Menu
+        </button>
+      </div>
+
+      {/* Overlay & Sidebar */}
+      {open && (
+        <div style={styles.overlay} onClick={() => setOpen(false)}>
+          <div style={styles.sidebar} onClick={(e) => e.stopPropagation()}>
+            <button style={styles.closeBtn} onClick={() => setOpen(false)}>
+              ✕
+            </button>
+            <div style={styles.sidebarContent}>
+              <h3 style={styles.heading}>Options</h3>
+              <ul style={styles.ul}>
+                {['History 1', 'History 2', 'History 3'].map((item) => (
+                  <li
+                    key={item}
+                    style={styles.listItem}
+                    onClick={() => handleClick(item)}
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Inline styles
+const styles = {
+  navbar: {
+    backgroundColor: '#4a00e0',
+    padding: '10px 20px',
+    color: 'white',
+  },
+  menuBtn: {
+    background: 'none',
+    border: 'none',
+    fontSize: '20px',
+    color: 'white',
+    cursor: 'pointer',
+  },
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 100,
+  },
+  sidebar: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '260px',
+    height: '100%',
+    backgroundColor: '#fff',
+    boxShadow: '2px 0 10px rgba(0,0,0,0.2)',
+    padding: '16px',
+    zIndex: 101,
+    animation: 'slideIn 0.3s ease-out',
+  },
+  closeBtn: {
+    background: 'none',
+    border: 'none',
+    fontSize: '20px',
+    float: 'right',
+    cursor: 'pointer',
+  },
+  sidebarContent: {
+    marginTop: '30px',
+  },
+  heading: {
+    marginBottom: '10px',
+  },
+  ul: {
+    listStyle: 'none',
+    padding: 0,
+  },
+  listItem: {
+    padding: '8px 12px',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    transition: 'background 0.2s',
+  },
+};
+
+// Add hover effect via JS
+document.addEventListener('DOMContentLoaded', () => {
+  const styleTag = document.createElement('style');
+  styleTag.innerHTML = `
+    @keyframes slideIn {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+    li:hover {
+      background-color: #f0f0f0;
+    }
+  `;
+  document.head.appendChild(styleTag);
+});
+
+
+
 ///Loader
 
 import React from 'react';
