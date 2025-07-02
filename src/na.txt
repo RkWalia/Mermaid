@@ -1,3 +1,91 @@
+{showSettings && (
+          <div style={styles.dropdown}>
+            <div style={styles.item}>Profile</div>
+
+            {/* Themes with submenu */}
+            <div
+              style={styles.item}
+              onMouseEnter={() => setShowThemes(true)}
+              onMouseLeave={() => setShowThemes(false)}
+            >
+              Themes ▶
+
+              {showThemes && (
+                <div style={styles.submenu}>
+                  {Object.entries(themes).map(([key, label]) => (
+                    <div
+                      key={key}
+                      style={styles.item}
+                      onClick={() => {
+                        alert(`Selected: ${label}`);
+                        setShowSettings(false);
+                      }}
+                    >
+                      {label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div style={styles.item}>Logout</div>
+          </div>
+        )}
+
+
+
+const styles = {
+  navbar: {
+    background: '#4a00e0',
+    padding: '10px 20px',
+    color: '#fff',
+  },
+  navBtn: {
+    background: 'none',
+    border: 'none',
+    color: '#fff',
+    fontSize: '16px',
+    cursor: 'pointer',
+    padding: '6px 12px',
+  },
+  dropdown: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    background: '#fff',
+    color: '#000',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+    zIndex: 100,
+    minWidth: '160px',
+    padding: '6px 0',
+  },
+  submenu: {
+    position: 'absolute',
+    top: 0,
+    left: '100%',
+    background: '#fff',
+    color: '#000',
+    border: '1px solid #ddd',
+    borderRadius: '6px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+    padding: '6px 0',
+    minWidth: '160px',
+    zIndex: 110,
+  },
+  item: {
+    padding: '8px 16px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    position: 'relative',
+    backgroundColor: '#fff',
+  },
+};
+
+
+
+
 import React, { useState } from 'react';
 
 export default function SidebarMenu() {
